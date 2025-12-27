@@ -1,7 +1,6 @@
-import AuthSuccess from "../pages/AuthSuccess/AuthSuccess";
 import Login from "../pages/Login/Login";
+import NotesPage from "../pages/NotesPage/NotesPage";
 import NotPoundPage from "../pages/NotPoundPage/NotPoundPage";
-import Register from "../pages/Register/Register";
 
 export const routes = [
   {
@@ -9,12 +8,12 @@ export const routes = [
     page: Login,
   },
   {
-    path: "/auth-success",
-    page: AuthSuccess,
+    path: "/my-notes",
+    page: NotesPage,
   },
   {
     path: "/signup",
-    page: Register,
+    // page: Register,
   },
   {
     path: "*",
