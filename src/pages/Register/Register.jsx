@@ -1,38 +1,40 @@
+// src/pages/Register.jsx
 import React from "react";
 import { Form, Input, Button, Card, message, Row, Col, Typography } from "antd";
-import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
 import { useDispatch } from "react-redux";
-import { LOGIN_MUTATION } from "../../graphql/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { setLogin } from "../../router/auth/authSlice";
+import { REGISTER_MUTATION } from "../../graphql/auth";
 
 const { Title, Text } = Typography;
 
-const Login = () => {
+const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [login, { loading }] = useMutation(LOGIN_MUTATION);
+  const [register, { loading }] = useMutation(REGISTER_MUTATION);
 
   const onFinish = async (values) => {
     try {
-      const { data } = await login({
+      const { data } = await register({
         variables: {
           data: {
             email: values.email,
             password: values.password,
+            fullName: values.fullName,
           },
         },
       });
 
-      const token = data.login.access_token;
+      const token = data.register.access_token;
       dispatch(setLogin(token));
 
-      message.success("Đăng nhập thành công 🚀");
-      navigate("/my-notes");
+      message.success("Đăng ký thành công 🎉");
+      navigate("/");
     } catch (error) {
-      message.error(error?.graphQLErrors?.[0]?.message || "Đăng nhập thất bại");
+      message.error(error?.graphQLErrors?.[0]?.message || "Đăng ký thất bại");
     }
   };
 
@@ -61,15 +63,27 @@ const Login = () => {
           {/* LEFT - FORM */}
           <Col xs={24} md={12} style={{ padding: 40 }}>
             <Title level={2} style={{ color: "#13c2c2" }}>
-              Welcome Back 👋
+              Create Account ✨
             </Title>
-            <Text type="secondary">Đăng nhập để tiếp tục ghi chú của bạn</Text>
+            <Text type="secondary">Tạo tài khoản để bắt đầu ghi chú</Text>
 
             <Form
               layout="vertical"
               onFinish={onFinish}
               style={{ marginTop: 32 }}
             >
+              <Form.Item
+                label="Họ và tên"
+                name="fullName"
+                rules={[{ required: true, message: "Vui lòng nhập họ tên" }]}
+              >
+                <Input
+                  prefix={<UserOutlined />}
+                  placeholder="Đoàn Đức Hải"
+                  size="large"
+                />
+              </Form.Item>
+
               <Form.Item
                 label="Email"
                 name="email"
@@ -112,12 +126,19 @@ const Login = () => {
                   marginTop: 8,
                 }}
               >
-                Đăng nhập
+                Đăng ký
               </Button>
+
+              <Text
+                type="secondary"
+                style={{ display: "block", marginTop: 16 }}
+              >
+                Đã có tài khoản?{" "}
+                <Link to="/login" style={{ color: "#13c2c2" }}>
+                  Đăng nhập
+                </Link>
+              </Text>
             </Form>
-            <span style={{ display: "block", marginTop: 16 }}>
-              Bạn chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
-            </span>
           </Col>
 
           {/* RIGHT - IMAGE */}
@@ -135,7 +156,7 @@ const Login = () => {
           >
             <img
               src="https://res.cloudinary.com/dbzuqtojr/image/upload/v1766938778/note-logo-removebg-preview_crfln0.png"
-              alt="Notes"
+              alt="Register"
               style={{
                 width: 360,
                 animation: "float 3s ease-in-out infinite",
@@ -143,10 +164,10 @@ const Login = () => {
             />
 
             <Title level={4} style={{ marginTop: 24 }}>
-              Ghi chú thông minh ✍️
+              Bắt đầu ngay hôm nay 🚀
             </Title>
             <Text type="secondary" style={{ textAlign: "center" }}>
-              Quản lý ghi chú • Nhóm • Thùng rác • Ngày tháng
+              Ghi chú • Nhóm • Đồng bộ • An toàn
             </Text>
           </Col>
         </Row>
@@ -166,4 +187,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

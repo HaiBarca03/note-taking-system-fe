@@ -16,14 +16,25 @@ import {
   InboxOutlined,
   EditOutlined,
   DeleteOutlined,
+  DeleteFilled,
 } from "@ant-design/icons";
+import "./NotesSidebar.css";
 import { useEffect, useState } from "react";
 import { Input } from "antd";
-import { CREATE_GROUP_MUTATION, GET_GROUPS_QUERY } from "../../graphql/groups";
+import {
+  CREATE_GROUP_MUTATION,
+  GET_GROUPS_QUERY,
+  UPDATE_GROUP_MUTATION,
+} from "../../graphql/groups";
 import { useMutation, useLazyQuery, useQuery } from "@apollo/client";
 import AddGroupModal from "./AddGroupModal";
-import { CREATE_NOTE_MUTATION, GET_NOTES_BY_GROUP } from "../../graphql/notes";
+import {
+  CREATE_NOTE_MUTATION,
+  GET_NOTES_BY_GROUP,
+  UPDATE_NOTE_MUTATION,
+} from "../../graphql/notes";
 import AddNoteModal from "./AddNoteModal";
+import TrashModal from "./TrashModal";
 
 const { Panel } = Collapse;
 const { Text } = Typography;
@@ -38,9 +49,18 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [expandedGroupId, setExpandedGroupId] = useState(null);
   const [loadingGroupId, setLoadingGroupId] = useState(null);
+  const [openTrashModal, setOpenTrashModal] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState(null);
 
+  const [updateNote] = useMutation(UPDATE_NOTE_MUTATION);
+  const [updateGroup] = useMutation(UPDATE_GROUP_MUTATION, {
+    refetchQueries: [GET_GROUPS_QUERY], // reload
+  });
   const [createGroup, { loading: creatingGroup }] = useMutation(
-    CREATE_GROUP_MUTATION
+    CREATE_GROUP_MUTATION,
+    {
+      refetchQueries: [GET_GROUPS_QUERY], // reload
+    }
   );
 
   const [createNote, { loading: creatingNote }] =
@@ -100,12 +120,12 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
         },
       });
 
-      message.success("Group created");
+      message.success("Tạo nhóm thành công");
       setOpenAddGroup(false);
 
       // TODO: update state hoặc refetch groups
     } catch (err) {
-      message.error("Create group failed");
+      message.error("Tạo nhóm thất bại");
     }
   };
 
@@ -117,7 +137,7 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
         },
       });
 
-      message.success("Note created");
+      message.success("Tạo ghi chú thành công");
       setOpenAddNote(false);
       setGroups((prev) =>
         prev.map((g) =>
@@ -136,24 +156,127 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
       // update groups state
       // or Apollo cache
     } catch (err) {
-      message.error("Create note failed");
+      message.error("Tạo ghi chú thất bại");
       console.error(err);
     }
   };
 
-  const handleDeleteGroup = (groupId) => {
-    console.log("Soft delete group:", groupId);
-    // TODO: soft delete group
+  const handleRenameNote = async (noteId) => {
+    if (!tempName.trim()) {
+      message.warning("Tiêu đề ghi chú không được để trống");
+      return;
+    }
+
+    try {
+      await updateNote({
+        variables: {
+          input: {
+            id: noteId,
+            title: tempName.trim(),
+          },
+        },
+      });
+
+      // ✅ UPDATE LOCAL STATE
+      setGroups((prev) =>
+        prev.map((g) => ({
+          ...g,
+          notes: g.notes.map((n) =>
+            n.id === noteId ? { ...n, title: tempName.trim() } : n
+          ),
+        }))
+      );
+
+      message.success("Sửa tên ghi chú thành công ✏️");
+    } catch (err) {
+      console.error(err);
+      message.error("Sửa tên ghi chú thất bại");
+    } finally {
+      setEditingNoteId(null);
+    }
   };
 
-  const handleDeleteNote = (noteId) => {
-    console.log("Soft delete note:", noteId);
-    // TODO: soft delete note
+  const handleDeleteNote = async (noteId) => {
+    try {
+      await updateNote({
+        variables: {
+          input: {
+            id: noteId,
+            isDeleted: true,
+          },
+        },
+      });
+
+      // ✅ UPDATE LOCAL STATE
+      setGroups((prev) =>
+        prev.map((g) => ({
+          ...g,
+          notes: g.notes.map((n) =>
+            n.id === noteId ? { ...n, isDeleted: true } : n
+          ),
+        }))
+      );
+
+      message.success("Xoá ghi chú thành công 🗑");
+    } catch (err) {
+      console.error(err);
+      message.error("Xoá ghi chú thất bại");
+    }
   };
 
-  const openTrash = () => {
-    console.log("Open trash view");
-    // TODO: show deleted groups/notes
+  const handleDeleteGroup = async (groupId) => {
+    try {
+      await updateGroup({
+        variables: {
+          input: {
+            id: groupId,
+            isDeleted: true,
+          },
+        },
+      });
+
+      // ✅ UPDATE LOCAL STATE
+      setGroups((prev) =>
+        prev.map((g) => (g.id === groupId ? { ...g, isDeleted: true } : g))
+      );
+
+      message.success("Xoá nhóm thành công 🗑");
+    } catch (err) {
+      console.error(err);
+      message.error("Đã có lỗi xảy ra khi xoá nhóm");
+    }
+  };
+
+  const handleRenameGroup = async (groupId) => {
+    if (!tempName.trim()) {
+      message.warning("Tên nhóm không được để trống");
+      return;
+    }
+
+    try {
+      await updateGroup({
+        variables: {
+          input: {
+            id: groupId,
+            name: tempName.trim(),
+          },
+        },
+      });
+
+      // ✅ UPDATE LOCAL STATE
+      setGroups((prev) =>
+        prev.map((g) =>
+          g.id === groupId ? { ...g, name: tempName.trim() } : g
+        )
+      );
+
+      message.success("Sửa tên nhóm thành công ✏️");
+    } catch (err) {
+      console.error(err);
+      message.error("Sửa tên nhóm thất bại");
+    } finally {
+      setEditingGroupId(null);
+    }
   };
 
   return (
@@ -162,17 +285,20 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
       <div style={{ padding: 16, flex: 1, overflowY: "auto" }}>
         {/* Header */}
         <Space style={{ width: "100%", justifyContent: "space-between" }}>
-          <Text strong>📒 Groups</Text>
+          <Text strong>
+            {" "}
+            <a href="/">Trang chủ /</a> 📒 Nhóm
+          </Text>
           <Button
             size="small"
             icon={<PlusOutlined />}
             type="primary"
             onClick={() => setOpenAddGroup(true)}
           >
-            Add Group
+            Thêm
           </Button>
         </Space>
-        <Spin spinning={loadingGroups} tip="Loading groups...">
+        <Spin spinning={loadingGroups} tip="Đang tải...">
           <Collapse
             accordion
             activeKey={expandedGroupId}
@@ -190,16 +316,13 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                         autoFocus
                         value={tempName}
                         onChange={(e) => setTempName(e.target.value)}
-                        onBlur={() => {
-                          console.log("Rename group:", group.id, tempName);
-                          setEditingGroupId(null);
-                        }}
-                        onPressEnter={() => {
-                          console.log("Rename group:", group.id, tempName);
-                          setEditingGroupId(null);
-                        }}
+                        onBlur={() => handleRenameGroup(group.id)} // 👈 auto save
+                        onPressEnter={() => handleRenameGroup(group.id)}
                         onKeyDown={(e) => {
-                          if (e.key === "Escape") setEditingGroupId(null);
+                          if (e.key === "Escape") {
+                            setEditingGroupId(null);
+                            setTempName(group.name);
+                          }
                         }}
                       />
                     ) : (
@@ -207,7 +330,7 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                     )}
 
                     {/* Edit group */}
-                    <Tooltip title="Rename group">
+                    <Tooltip title="Sửa tên nhóm">
                       <EditOutlined
                         onClick={(e) => {
                           e.stopPropagation();
@@ -218,8 +341,8 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                     </Tooltip>
 
                     {/* Delete group */}
-                    <Tooltip title="Delete group">
-                      <DeleteOutlined
+                    <Tooltip title="Xoá nhóm">
+                      <DeleteFilled
                         style={{ color: "#ff4d4f" }}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -230,7 +353,7 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                   </Space>
                 }
                 extra={
-                  <Tooltip title="Add note">
+                  <Tooltip title="Thêm ghi chú">
                     <PlusOutlined
                       onClick={(e) => {
                         e.stopPropagation();
@@ -244,15 +367,22 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                 <Spin spinning={loadingGroupId === group.id}>
                   <List
                     size="small"
-                    dataSource={group.notes}
+                    dataSource={group.notes.filter((n) => !n.isDeleted)}
                     renderItem={(note) => (
                       <List.Item
+                        className={
+                          selectedNoteId === note.id ? "note-active" : ""
+                        }
                         style={{
                           cursor: "pointer",
                           display: "flex",
                           justifyContent: "space-between",
                         }}
-                        onClick={() => onSelectNote(note)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedNoteId(note.id);
+                          onSelectNote(note);
+                        }}
                       >
                         <Space>
                           {editingNoteId === note.id ? (
@@ -261,16 +391,13 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                               autoFocus
                               value={tempName}
                               onChange={(e) => setTempName(e.target.value)}
-                              onBlur={() => {
-                                console.log("Rename note:", note.id, tempName);
-                                setEditingNoteId(null);
-                              }}
-                              onPressEnter={() => {
-                                console.log("Rename note:", note.id, tempName);
-                                setEditingNoteId(null);
-                              }}
+                              onBlur={() => handleRenameNote(note.id)} // 👈 auto save
+                              onPressEnter={() => handleRenameNote(note.id)}
                               onKeyDown={(e) => {
-                                if (e.key === "Escape") setEditingNoteId(null);
+                                if (e.key === "Escape") {
+                                  setEditingNoteId(null);
+                                  setTempName(note.title);
+                                }
                               }}
                             />
                           ) : (
@@ -279,8 +406,8 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                         </Space>
 
                         <Space>
-                          {/* Edit note */}
-                          <Tooltip title="Rename note">
+                          {/* Rename */}
+                          <Tooltip title="Sửa tên ghi chú">
                             <EditOutlined
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -290,9 +417,9 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                             />
                           </Tooltip>
 
-                          {/* Delete note */}
-                          <Tooltip title="Delete note">
-                            <DeleteOutlined
+                          {/* Delete */}
+                          <Tooltip title="Xoá ghi chú">
+                            <DeleteFilled
                               style={{ color: "#ff7875" }}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -312,7 +439,7 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
       </div>
 
       {/* FILTER */}
-      <div style={{ padding: 16, borderTop: "1px solid #eee" }}>
+      {/* <div style={{ padding: 16, borderTop: "1px solid #eee" }}>
         <Text strong>🔍 Filter notes</Text>
         <Divider style={{ margin: "8px 0" }} />
 
@@ -342,18 +469,24 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
             Clear filter
           </Button>
         </Space>
-      </div>
+      </div> */}
 
       {/* TRASH */}
-      <div style={{ padding: "8px 16px", borderTop: "1px solid #eee" }}>
+      <div
+        style={{
+          padding: "8px 16px",
+          borderTop: "1px solid #eee",
+          fontWeight: "bold",
+        }}
+      >
         <Button
           type="text"
           danger
-          icon={<InboxOutlined />}
+          icon={<DeleteFilled />}
           block
-          onClick={openTrash}
+          onClick={() => setOpenTrashModal(true)}
         >
-          Trash
+          Thùng rác
         </Button>
       </div>
 
@@ -367,6 +500,10 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
         group={selectedGroup}
         onCancel={() => setOpenAddNote(false)}
         onAddNote={handleAddNote}
+      />
+      <TrashModal
+        open={openTrashModal}
+        onClose={() => setOpenTrashModal(false)}
       />
     </>
   );

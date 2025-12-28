@@ -20,6 +20,18 @@ export const GET_NOTES_BY_GROUP = gql`
       title
       content
       createdAt
+      isDeleted
+    }
+  }
+`;
+
+export const UPDATE_NOTE_MUTATION = gql`
+  mutation UpdateNote($input: UpdateNoteInput!) {
+    updateNote(updateNoteInput: $input) {
+      id
+      title
+      content
+      updatedAt
     }
   }
 `;

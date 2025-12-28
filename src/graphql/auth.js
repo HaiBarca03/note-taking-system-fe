@@ -8,3 +8,11 @@ export const LOGIN_MUTATION = gql`
     }
   }
 `;
+
+export const REGISTER_MUTATION = gql`
+  mutation Register($data: RegisterInput!) {
+    register(data: $data) {
+      access_token
+    }
+  }
+`;

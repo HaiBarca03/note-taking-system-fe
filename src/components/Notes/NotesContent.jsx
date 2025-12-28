@@ -3,13 +3,16 @@ import { Empty, Typography, Button, Space, message } from "antd";
 import SunEditor from "suneditor-react";
 import "suneditor/dist/css/suneditor.min.css";
 import { useEffect, useState } from "react";
+import { UPDATE_NOTE_MUTATION } from "../../graphql/notes";
+import { useMutation } from "@apollo/client";
 
 const { Title } = Typography;
 
 const NotesContent = ({ note }) => {
   const [content, setContent] = useState("");
 
-  // Khi chọn note khác → load content
+  const [updateNote, { loading }] = useMutation(UPDATE_NOTE_MUTATION);
+
   useEffect(() => {
     if (note?.content) {
       setContent(note.content);
@@ -33,14 +36,24 @@ const NotesContent = ({ note }) => {
     );
   }
 
-  const handleSave = () => {
-    console.log("SAVE NOTE:", {
-      noteId: note.id,
-      content,
-    });
+  const handleSave = async () => {
+    try {
+      await updateNote({
+        variables: {
+          input: {
+            id: note.id,
+            content: content,
+            // title: note.title, // nếu cho phép sửa title thì thêm
+            // groupId: note.groupId
+          },
+        },
+      });
 
-    // TODO: call GraphQL mutation updateNote
-    message.success("Note saved successfully 💾");
+      message.success("Lưu ghi chú thành công 💾");
+    } catch (error) {
+      console.error(error);
+      message.error("Có lỗi xảy ra ❌");
+    }
   };
 
   return (
@@ -61,11 +74,12 @@ const NotesContent = ({ note }) => {
         }}
       >
         <Title level={3} style={{ margin: 0 }}>
-          {note.title}
+          {note.title} ({note.createdAt.slice(0, 10)})
+          {/* <CalendarOutlined /> */}
         </Title>
 
-        <Button type="primary" onClick={handleSave}>
-          Save
+        <Button type="primary" onClick={handleSave} loading={loading}>
+          Lưu
         </Button>
       </Space>
 
@@ -100,15 +114,6 @@ const NotesContent = ({ note }) => {
             ],
           ],
           defaultStyle: "font-size: 16px;",
-          font: [
-            "Arial",
-            "Comic Sans MS",
-            "Courier New",
-            "Georgia",
-            "Tahoma",
-            "Trebuchet MS",
-            "Verdana",
-          ],
         }}
       />
     </div>
