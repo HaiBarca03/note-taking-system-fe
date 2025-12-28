@@ -20,28 +20,28 @@ const AddNoteModal = ({ open, onCancel, onAddNote, group }) => {
 
   return (
     <Modal
-      title={`Add note to "${group?.name || ""}"`}
+      title={`Thêm ghi chú vào nhóm "${group?.name || ""}"`}
       open={open}
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>
-          Cancel
+          Huỷ
         </Button>,
         <Button key="submit" type="primary" onClick={handleOk}>
-          Add Note
+          Tạo ghi chú
         </Button>,
       ]}
     >
       <Form form={form} layout="vertical">
         <Form.Item
           name="title"
-          label="Note title"
+          label="Tiêu đề ghi chú"
           rules={[
-            { required: true, message: "Please enter note title" },
-            { max: 100, message: "Max 100 characters" },
+            { required: true, message: "Vui lòng nhập tiêu đề ghi chú" },
+            { max: 100, message: "Tối đa 100 ký tự" },
           ]}
         >
-          <Input placeholder="Enter note title..." autoFocus />
+          <Input placeholder="Nhập tiêu đề ghi chú..." autoFocus />
         </Form.Item>
       </Form>
     </Modal>
