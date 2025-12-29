@@ -1,0 +1,43 @@
+.notes-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Desktop sidebar */
+.notes-sidebar-desktop {
+  width: 400px; /* sidebar width */
+  border-right: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Content */
+.notes-content {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Toggle button for mobile */
+.sidebar-toggle-btn {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 767px) {
+  .notes-sidebar-desktop {
+    display: none;
+  }
+
+  .sidebar-toggle-btn {
+    display: block;
+  }
+}

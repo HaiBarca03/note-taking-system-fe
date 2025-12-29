@@ -1,39 +1,39 @@
 // src/components/notes/NotesContent.jsx
-import { Empty, Typography, Button, Space, message } from "antd";
-import SunEditor from "suneditor-react";
-import "suneditor/dist/css/suneditor.min.css";
-import { useEffect, useState } from "react";
-import { UPDATE_NOTE_MUTATION } from "../../graphql/notes";
-import { useMutation } from "@apollo/client";
-
-const { Title } = Typography;
+import { Empty, Typography, Button, Space, message } from 'antd'
+import SunEditor from 'suneditor-react'
+import 'suneditor/dist/css/suneditor.min.css'
+import { useEffect, useState } from 'react'
+import { UPDATE_NOTE_MUTATION } from '../../graphql/notes'
+import { useMutation } from '@apollo/client'
+import './NotesContent.css' // ✅ thêm CSS
+const { Title } = Typography
 
 const NotesContent = ({ note }) => {
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('')
 
-  const [updateNote, { loading }] = useMutation(UPDATE_NOTE_MUTATION);
+  const [updateNote, { loading }] = useMutation(UPDATE_NOTE_MUTATION)
 
   useEffect(() => {
     if (note?.content) {
-      setContent(note.content);
+      setContent(note.content)
     } else {
-      setContent("");
+      setContent('')
     }
-  }, [note]);
+  }, [note])
 
   if (!note) {
     return (
       <div
         style={{
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
         }}
       >
         <Empty description="Select a note to view content" />
       </div>
-    );
+    )
   }
 
   const handleSave = async () => {
@@ -42,43 +42,34 @@ const NotesContent = ({ note }) => {
         variables: {
           input: {
             id: note.id,
-            content: content,
+            content: content
             // title: note.title, // nếu cho phép sửa title thì thêm
             // groupId: note.groupId
-          },
-        },
-      });
+          }
+        }
+      })
 
-      message.success("Lưu ghi chú thành công 💾");
+      message.success('Lưu ghi chú thành công 💾')
     } catch (error) {
-      console.error(error);
-      message.error("Có lỗi xảy ra ❌");
+      console.error(error)
+      message.error('Có lỗi xảy ra ❌')
     }
-  };
+  }
 
   return (
-    <div
-      style={{
-        padding: 24,
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* Header */}
-      <Space
-        style={{
-          marginBottom: 16,
-          justifyContent: "space-between",
-          width: "100%",
-        }}
-      >
-        <Title level={3} style={{ margin: 0 }}>
+    <div className="notes-content-wrapper">
+      {/* Header cố định */}
+      <Space className="notes-content-header">
+        <Title className="notes-name-header" level={3} style={{ margin: 0 }}>
           {note.title} ({note.createdAt.slice(0, 10)})
-          {/* <CalendarOutlined /> */}
         </Title>
 
-        <Button type="primary" onClick={handleSave} loading={loading}>
+        <Button
+          className="btn-save-mobile"
+          type="primary"
+          onClick={handleSave}
+          loading={loading}
+        >
           Lưu
         </Button>
       </Space>
@@ -86,38 +77,39 @@ const NotesContent = ({ note }) => {
       {/* Editor */}
       <SunEditor
         setContents={content}
+        className="notes-editor"
         onChange={setContent}
         setOptions={{
-          height: "calc(100vh - 180px)",
+          height: 'calc(100vh - 100px)', // trừ header + padding
           buttonList: [
             [
-              "undo",
-              "redo",
-              "font",
-              "fontSize",
-              "formatBlock",
-              "bold",
-              "underline",
-              "italic",
-              "strike",
-              "fontColor",
-              "hiliteColor",
-              "align",
-              "list",
-              "table",
-              "link",
-              "image",
-              "video",
-              "fullScreen",
-              "codeView",
-              "removeFormat",
-            ],
+              'undo',
+              'redo',
+              'font',
+              'fontSize',
+              'formatBlock',
+              'bold',
+              'underline',
+              'italic',
+              'strike',
+              'fontColor',
+              'hiliteColor',
+              'align',
+              'list',
+              'table',
+              'link',
+              'image',
+              'video',
+              'fullScreen',
+              'codeView',
+              'removeFormat'
+            ]
           ],
-          defaultStyle: "font-size: 16px;",
+          defaultStyle: 'font-size: 16px;'
         }}
       />
     </div>
-  );
-};
+  )
+}
 
-export default NotesContent;
+export default NotesContent

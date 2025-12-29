@@ -1,0 +1,86 @@
+/* ===== Card ===== */
+.login-card {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Left (form) ===== */
+.login-left {
+  padding: 40px;
+}
+
+/* ===== Right (image) ===== */
+.login-right {
+  background: linear-gradient(135deg, #e6fffb 0%, #b5f5ec 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+/* ===== TABLET ===== */
+@media (max-width: 991px) {
+  .login-card {
+    max-width: 720px;
+  }
+
+  .login-left,
+  .login-right {
+    padding: 32px;
+  }
+
+  .login-right img {
+    width: 280px;
+  }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 767px) {
+  .login-card {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .login-left {
+    padding: 24px;
+  }
+
+  .login-right {
+    display: none;
+  }
+
+  .login-left h2 {
+    font-size: 22px;
+  }
+
+  .login-left .ant-input,
+  .login-left .ant-input-password {
+    font-size: 16px;
+  }
+
+  .login-left button {
+    height: 44px;
+    font-size: 16px;
+  }
+}
+
+/* ===== Animation ===== */
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.login-right img {
+  animation: float 3s ease-in-out infinite;
+}

@@ -1,9 +1,26 @@
+.notes-sidebar-wrapper {
+  padding: 16px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.notes-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notes-group-panel {
+  margin-top: 16px;
+}
+
 .note-active {
   background: linear-gradient(135deg, #d0d8d6, #f0fffc);
   border-left: 4px solid #13c2c2;
-  transform: scale(1.01);
 }
 
-.ant-list-item:hover {
-  background: #e5f4f1;
+.trash-button {
+  padding: 8px 16px;
+  border-top: 1px solid #eee;
+  font-weight: bold;
 }
