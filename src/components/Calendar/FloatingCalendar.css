@@ -15,6 +15,14 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.clock {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #4f46e5;
+  letter-spacing: 1px;
+}
+
 .calendar-btn:hover {
   transform: scale(1.1);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
@@ -46,6 +54,7 @@
   margin-top: 10px;
   font-size: 14px;
   text-align: center;
+  color: #4f46e5;
 }
 
 /* 📱 Mobile */

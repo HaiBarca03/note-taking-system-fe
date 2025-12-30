@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import solarlunar from "solarlunar";
@@ -7,14 +7,25 @@ import "./FloatingCalendar.css";
 const FloatingCalendar = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
 
   const toggleCalendar = () => {
     if (open) {
-      // Khi đóng → reset về hôm nay
       setDate(new Date());
+      setTime(new Date());
     }
     setOpen(!open);
   };
+
+  useEffect(() => {
+    if (!open) return;
+
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [open]);
 
   const lunar = solarlunar.solar2lunar(
     date.getFullYear(),
@@ -39,6 +50,11 @@ const FloatingCalendar = () => {
             🌙 <b>Âm:</b> {lunar.lDay}/{lunar.lMonth}/{lunar.lYear}
             {lunar.isLeap ? " (Nhuận)" : ""}
           </p>
+
+          {/* ⏰ Đồng hồ */}
+          <div className="clock">
+            ⏰ {time.toLocaleTimeString("vi-VN")}
+          </div>
         </div>
       </div>
     </>
