@@ -1,9 +1,13 @@
-// src/pages/NotesPage.jsx
-
 import NotesLayout from "../../components/Notes/NotesLayout";
+import FloatingCalendar from "../../components/Calendar/FloatingCalendar";
 
 const NotesPage = () => {
-  return <NotesLayout />;
+  return (
+    <>
+      <NotesLayout />
+      <FloatingCalendar />
+    </>
+  );
 };
 
 export default NotesPage;
