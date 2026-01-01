@@ -118,13 +118,12 @@
 ====================== */
 @media (max-width: 480px) {
   .shared-note-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 8px;
+    flex-direction: column;
+    padding: 0;
+    margin: 0 0 8px;
     gap: 8px;
   }
-
+  
   .shared-note-title {
     max-width: 100%;
     font-size: 15px;

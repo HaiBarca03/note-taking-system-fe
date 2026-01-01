@@ -6,6 +6,7 @@ import SunEditor from 'suneditor-react'
 import 'suneditor/dist/css/suneditor.min.css'
 import { GET_SHARED_NOTE, UPDATE_SHARED_NOTE } from '../../graphql/notes'
 import './SharedNotePage.css'
+import FloatingCalendar from '../../components/Calendar/FloatingCalendar'
 
 const { Title } = Typography
 
@@ -55,6 +56,7 @@ const SharedNotePage = () => {
   const note = data.sharedNote
 
   return (
+    <>
     <div className="shared-note-wrapper">
       {/* Header */}
       <Space className="shared-note-header">
@@ -107,6 +109,8 @@ const SharedNotePage = () => {
         }}
       />
     </div>
+    <FloatingCalendar />
+    </>
   )
 }
 
