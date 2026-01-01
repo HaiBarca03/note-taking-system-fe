@@ -35,3 +35,31 @@ export const UPDATE_NOTE_MUTATION = gql`
     }
   }
 `;
+
+export const SHARE_NOTE_MUTATION = gql`
+  mutation ShareNote($id: Int!, $permission: SharePermission!) {
+    shareNote(id: $id, permission: $permission)
+  }
+`;
+
+export const GET_SHARED_NOTE = gql`
+  query SharedNote($token: String!) {
+    sharedNote(token: $token) {
+      id
+      title
+      content
+      createdAt
+      updatedAt
+    }
+  }
+`
+
+export const UPDATE_SHARED_NOTE = gql`
+  mutation UpdateSharedNote($token: String!, $content: String!) {
+    updateSharedNote(token: $token, content: $content) {
+      id
+      content
+      updatedAt
+    }
+  }
+`

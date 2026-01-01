@@ -16,7 +16,8 @@ import {
   InboxOutlined,
   EditOutlined,
   DeleteOutlined,
-  DeleteFilled
+  DeleteFilled,
+  ShareAltOutlined
 } from '@ant-design/icons'
 import './NotesSidebar.css'
 import { useEffect, useState } from 'react'
@@ -31,11 +32,13 @@ import AddGroupModal from './AddGroupModal'
 import {
   CREATE_NOTE_MUTATION,
   GET_NOTES_BY_GROUP,
+  SHARE_NOTE_MUTATION,
   UPDATE_NOTE_MUTATION
 } from '../../graphql/notes'
 import AddNoteModal from './AddNoteModal'
 import TrashModal from './TrashModal'
 import './NotesSidebar.css'
+import ShareNoteModal from './ShareNoteModal'
 const { Panel } = Collapse
 const { Text } = Typography
 
@@ -51,6 +54,9 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
   const [loadingGroupId, setLoadingGroupId] = useState(null)
   const [openTrashModal, setOpenTrashModal] = useState(false)
   const [selectedNoteId, setSelectedNoteId] = useState(null)
+  const [shareModalOpen, setShareModalOpen] = useState(false)
+  const [shareNoteId, setShareNoteId] = useState(null)
+
 
   const [updateNote] = useMutation(UPDATE_NOTE_MUTATION)
   const [updateGroup] = useMutation(UPDATE_GROUP_MUTATION, {
@@ -68,6 +74,8 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
 
   const { data: groupsData, loading: loadingGroups } =
     useQuery(GET_GROUPS_QUERY)
+
+  const [shareNote, { loading: sharing }] = useMutation(SHARE_NOTE_MUTATION);
 
   useEffect(() => {
     if (groupsData?.groups) {
@@ -427,6 +435,17 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                               }}
                             />
                           </Tooltip>
+
+                          {/* Share */}
+                          <Tooltip title="Chia sẻ ghi chú">
+                            <ShareAltOutlined
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setShareNoteId(note.id)
+                                setShareModalOpen(true)
+                              }}
+                            />
+                          </Tooltip>
                         </Space>
                       </List.Item>
                     )}
@@ -498,6 +517,14 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
       <TrashModal
         open={openTrashModal}
         onClose={() => setOpenTrashModal(false)}
+      />
+      <ShareNoteModal
+        open={shareModalOpen}
+        noteId={shareNoteId}
+        onClose={() => {
+          setShareModalOpen(false)
+          setShareNoteId(null)
+        }}
       />
     </>
   )
