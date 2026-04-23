@@ -25,10 +25,12 @@ import { Input } from 'antd'
 import {
   CREATE_GROUP_MUTATION,
   GET_GROUPS_QUERY,
-  UPDATE_GROUP_MUTATION
+  UPDATE_GROUP_MUTATION,
+  SHARE_GROUP_MUTATION
 } from '../../graphql/groups'
 import { useMutation, useLazyQuery, useQuery } from '@apollo/client'
 import AddGroupModal from './AddGroupModal'
+import ShareGroupModal from './ShareGroupModal'
 import {
   CREATE_NOTE_MUTATION,
   GET_NOTES_BY_GROUP,
@@ -56,6 +58,8 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
   const [selectedNoteId, setSelectedNoteId] = useState(null)
   const [shareModalOpen, setShareModalOpen] = useState(false)
   const [shareNoteId, setShareNoteId] = useState(null)
+  const [shareGroupModalOpen, setShareGroupModalOpen] = useState(false)
+  const [shareGroupId, setShareGroupId] = useState(null)
 
 
   const [updateNote] = useMutation(UPDATE_NOTE_MUTATION)
@@ -358,6 +362,17 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                         }}
                       />
                     </Tooltip>
+
+                    {/* Share group */}
+                    <Tooltip title="Chia sẻ nhóm">
+                      <ShareAltOutlined
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setShareGroupId(group.id)
+                          setShareGroupModalOpen(true)
+                        }}
+                      />
+                    </Tooltip>
                   </Space>
                 }
                 extra={
@@ -524,6 +539,14 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
         onClose={() => {
           setShareModalOpen(false)
           setShareNoteId(null)
+        }}
+      />
+      <ShareGroupModal
+        open={shareGroupModalOpen}
+        groupId={shareGroupId}
+        onClose={() => {
+          setShareGroupModalOpen(false)
+          setShareGroupId(null)
         }}
       />
     </>

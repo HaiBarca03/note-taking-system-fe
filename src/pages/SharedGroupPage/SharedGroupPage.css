@@ -1,0 +1,50 @@
+.shared-group-wrapper {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.shared-group-header {
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+
+.shared-group-loading,
+.shared-group-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
+}
+
+.note-card {
+  height: 200px;
+  overflow: hidden;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.note-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.note-preview {
+  font-size: 13px;
+  height: 80px;
+  overflow: hidden;
+  color: #595959;
+  line-height: 1.5;
+}
+
+.note-preview * {
+  font-size: 13px !important;
+}
+
+.note-preview img {
+  display: none;
+  /* Ẩn ảnh trong phần preview */
+}
