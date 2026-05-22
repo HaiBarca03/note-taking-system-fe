@@ -2,16 +2,19 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
+  background: #f7f8fa;
 }
 
 /* Desktop sidebar */
 .notes-sidebar-desktop {
-  width: 400px; /* sidebar width */
-  border-right: 1px solid #eee;
+  width: 280px;
+  min-width: 280px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
+  box-shadow: 2px 0 16px rgba(0,0,0,0.18);
+  z-index: 10;
 }
 
 /* Content */
@@ -20,15 +23,22 @@
   height: 100%;
   overflow-y: auto;
   position: relative;
+  background: #f7f8fa;
 }
 
 /* Toggle button for mobile */
 .sidebar-toggle-btn {
   display: none;
   position: fixed;
-  top: 16px;
-  left: 16px;
+  top: 14px;
+  left: 14px;
   z-index: 1000;
+  border-radius: 8px !important;
+  background: linear-gradient(135deg, #14d2be, #0ea5e9) !important;
+  border: none !important;
+  box-shadow: 0 2px 10px rgba(20, 210, 190, 0.35) !important;
+  height: 34px !important;
+  font-weight: 600 !important;
 }
 
 /* ===== MOBILE ===== */
@@ -41,3 +51,4 @@
     display: block;
   }
 }
+

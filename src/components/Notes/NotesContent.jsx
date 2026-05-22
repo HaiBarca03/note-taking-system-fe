@@ -23,15 +23,10 @@ const NotesContent = ({ note }) => {
 
   if (!note) {
     return (
-      <div
-        style={{
-          height: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <Empty description="Select a note to view content" />
+      <div className="notes-empty-state">
+        <div className="notes-empty-icon">📝</div>
+        <div style={{ fontSize: 16, fontWeight: 600, color: '#475569' }}>Chọn một ghi chú</div>
+        <div style={{ fontSize: 13, color: '#94a3b8' }}>Mở sidebar và chọn ghi chú để bắt đầu</div>
       </div>
     )
   }
@@ -60,17 +55,20 @@ const NotesContent = ({ note }) => {
     <div className="notes-content-wrapper">
       {/* Header cố định */}
       <Space className="notes-content-header">
-        <Title className="notes-name-header" level={3} style={{ margin: 0 }}>
-          {note.title} ({note.createdAt.slice(0, 10)})
-        </Title>
+        <div>
+          <Title className="notes-name-header" level={3} style={{ margin: 0, display: 'inline' }}>
+            {note.title}
+          </Title>
+          <span className="notes-date-badge">{note.createdAt.slice(0, 10)}</span>
+        </div>
 
         <Button
-          className="btn-save-mobile"
+          className="btn-save btn-save-mobile"
           type="primary"
           onClick={handleSave}
           loading={loading}
         >
-          Lưu
+          💾 Lưu
         </Button>
       </Space>
 

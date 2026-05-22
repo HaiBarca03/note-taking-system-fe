@@ -1,26 +1,277 @@
+/* === SIDEBAR GLOBAL === */
 .notes-sidebar-wrapper {
-  padding: 16px;
+  padding: 0;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  background: linear-gradient(180deg, #0f1f2e 0%, #162031 100%);
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: #2a4a6b #0f1f2e;
 }
 
+.notes-sidebar-wrapper::-webkit-scrollbar {
+  width: 4px;
+}
+.notes-sidebar-wrapper::-webkit-scrollbar-track {
+  background: #0f1f2e;
+}
+.notes-sidebar-wrapper::-webkit-scrollbar-thumb {
+  background: #2a4a6b;
+  border-radius: 4px;
+}
+
+/* === HEADER === */
 .notes-sidebar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
+.sidebar-logo-text {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.sidebar-logo-text a {
+  color: rgba(255,255,255,0.35);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.sidebar-logo-text a:hover {
+  color: rgba(20, 210, 190, 0.7);
+}
+
+/* === SECTION TITLE === */
+.sidebar-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 16px 20px 8px;
+}
+
+/* === GROUP COLLAPSE === */
 .notes-group-panel {
-  margin-top: 16px;
+  margin: 0;
+  background: transparent;
+  border: none;
 }
 
+/* Override Ant Design collapse token backgrounds */
+.notes-group-panel .ant-collapse-panel,
+.notes-group-panel .ant-collapse-content,
+.notes-group-panel .ant-collapse-content-box,
+.notes-group-panel .ant-collapse-item,
+.notes-group-panel .ant-collapse {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Ghi đè CSS variable gốc của Ant Design */
+.notes-group-panel {
+  --ant-collapse-content-bg: transparent;
+  --ant-collapse-header-bg: transparent;
+}
+
+.notes-group-panel .ant-collapse-item {
+  border: none !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+
+.notes-group-panel .ant-collapse-header {
+  padding: 10px 20px !important;
+  color: rgba(255,255,255,0.75) !important;
+  font-weight: 500;
+  font-size: 13.5px;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.notes-group-panel .ant-collapse-header:hover {
+  background: rgba(255,255,255,0.05) !important;
+  color: #fff !important;
+}
+
+.notes-group-panel .ant-collapse-header .ant-collapse-arrow {
+  color: rgba(255,255,255,0.4) !important;
+  font-size: 10px !important;
+}
+
+.notes-group-panel .ant-collapse-content {
+  background: rgba(0,0,0,0.2) !important;
+  border: none !important;
+}
+
+.notes-group-panel .ant-collapse-content-box {
+  padding: 4px 0 !important;
+  background: transparent !important;
+}
+
+
+/* === NOTE ITEM === */
+.note-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px 8px 28px !important;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: none !important;
+  border-left: 3px solid transparent;
+
+  /* Override Ant Design white bg */
+  background: transparent !important;
+}
+
+.note-list-item:hover {
+  background: rgba(255,255,255,0.06) !important;
+}
+
+/* Ant Design List nền trong dark sidebar */
+.notes-group-panel .ant-list {
+  background: transparent !important;
+}
+
+.notes-group-panel .ant-list-item {
+  background: transparent !important;
+  border-block-end: none !important;
+}
+
+.notes-group-panel .ant-list-empty-text {
+  color: rgba(255,255,255,0.25);
+  font-size: 12px;
+  padding: 12px 20px;
+}
+
+
+.note-list-item .note-title-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+  transition: color 0.2s;
+}
+
+.note-list-item:hover .note-title-text {
+  color: rgba(255,255,255,0.9);
+}
+
+.note-list-item .note-actions {
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.note-list-item:hover .note-actions {
+  opacity: 1;
+}
+
+.note-action-icon {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  padding: 2px 3px;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+
+.note-action-icon:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+}
+
+.note-action-icon.danger:hover {
+  color: #ff7875;
+  background: rgba(255, 77, 79, 0.12);
+}
+
+/* === ACTIVE NOTE === */
 .note-active {
-  background: linear-gradient(135deg, #d0d8d6, #f0fffc);
-  border-left: 4px solid #13c2c2;
+  background: rgba(20, 210, 190, 0.1) !important;
+  border-left: 3px solid #14d2be !important;
 }
 
-.trash-button {
-  padding: 8px 16px;
-  border-top: 1px solid #eee;
-  font-weight: bold;
+.note-active .note-title-text {
+  color: #14d2be !important;
+  font-weight: 600;
 }
+
+/* === GROUP ACTIONS === */
+.group-action-icon {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+
+.group-action-icon:hover {
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.08);
+}
+
+.group-action-icon.danger:hover {
+  color: #ff7875;
+  background: rgba(255, 77, 79, 0.12);
+}
+
+/* === TRASH BUTTON === */
+.trash-button {
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin-top: auto;
+}
+
+.trash-button .ant-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 77, 79, 0.25) !important;
+  color: rgba(255, 120, 117, 0.75) !important;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  height: 36px;
+}
+
+.trash-button .ant-btn:hover {
+  background: rgba(255, 77, 79, 0.08) !important;
+  border-color: rgba(255, 77, 79, 0.5) !important;
+  color: #ff7875 !important;
+}
+
+/* === ADD GROUP BTN === */
+.add-group-btn {
+  border-radius: 7px !important;
+  background: linear-gradient(135deg, #14d2be, #0ea5e9) !important;
+  border: none !important;
+  height: 28px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(20, 210, 190, 0.3) !important;
+  transition: opacity 0.2s, transform 0.2s !important;
+}
+
+.add-group-btn:hover {
+  opacity: 0.9 !important;
+  transform: scale(1.03) !important;
+}
+
+/* === LOADING SPIN === */
+.notes-group-panel .ant-spin-dot-item {
+  background-color: #14d2be !important;
+}
+

@@ -155,9 +155,9 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
         prev.map((g) =>
           g.id === groupId
             ? {
-                ...g,
-                notes: [...g.notes, data.createNote]
-              }
+              ...g,
+              notes: [...g.notes, data.createNote]
+            }
             : g
         )
       )
@@ -297,19 +297,19 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
       <div className="notes-sidebar-wrapper">
         {/* Header */}
         <Space className="notes-sidebar-header">
-          <Text strong>
-            {' '}
-            <a href="/">Trang chủ /</a> 📒 Nhóm
-          </Text>
+          <span className="sidebar-logo-text">
+            <a href="/">Home</a> / Notes
+          </span>
           <Button
             size="small"
             icon={<PlusOutlined />}
-            type="primary"
+            className="add-group-btn"
             onClick={() => setOpenAddGroup(true)}
           >
-            Thêm
+            New Group
           </Button>
         </Space>
+        <div className="sidebar-section-title">Groups</div>
         <Spin spinning={loadingGroups} tip="Đang tải...">
           <Collapse
             accordion
@@ -327,8 +327,9 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                         size="small"
                         autoFocus
                         value={tempName}
+                        style={{ width: 120, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff' }}
                         onChange={(e) => setTempName(e.target.value)}
-                        onBlur={() => handleRenameGroup(group.id)} // 👈 auto save
+                        onBlur={() => handleRenameGroup(group.id)}
                         onPressEnter={() => handleRenameGroup(group.id)}
                         onKeyDown={(e) => {
                           if (e.key === 'Escape') {
@@ -338,12 +339,13 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                         }}
                       />
                     ) : (
-                      <Text>{group.name}</Text>
+                      <span style={{ fontSize: 13.5 }}>📁 {group.name}</span>
                     )}
 
                     {/* Edit group */}
                     <Tooltip title="Sửa tên nhóm">
                       <EditOutlined
+                        className="group-action-icon"
                         onClick={(e) => {
                           e.stopPropagation()
                           setEditingGroupId(group.id)
@@ -355,7 +357,7 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                     {/* Delete group */}
                     <Tooltip title="Xoá nhóm">
                       <DeleteFilled
-                        style={{ color: '#ff4d4f' }}
+                        className="group-action-icon danger"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleDeleteGroup(group.id)
@@ -366,6 +368,7 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                     {/* Share group */}
                     <Tooltip title="Chia sẻ nhóm">
                       <ShareAltOutlined
+                        className="group-action-icon"
                         onClick={(e) => {
                           e.stopPropagation()
                           setShareGroupId(group.id)
@@ -393,45 +396,38 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                     dataSource={group.notes.filter((n) => !n.isDeleted)}
                     renderItem={(note) => (
                       <List.Item
-                        className={
-                          selectedNoteId === note.id ? 'note-active' : ''
-                        }
-                        style={{
-                          cursor: 'pointer',
-                          display: 'flex',
-                          justifyContent: 'space-between'
-                        }}
+                        className={`note-list-item ${selectedNoteId === note.id ? 'note-active' : ''
+                          }`}
                         onClick={(e) => {
                           e.stopPropagation()
                           setSelectedNoteId(note.id)
                           onSelectNote(note)
                         }}
                       >
-                        <Space>
-                          {editingNoteId === note.id ? (
-                            <Input
-                              size="small"
-                              autoFocus
-                              value={tempName}
-                              onChange={(e) => setTempName(e.target.value)}
-                              onBlur={() => handleRenameNote(note.id)} // 👈 auto save
-                              onPressEnter={() => handleRenameNote(note.id)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Escape') {
-                                  setEditingNoteId(null)
-                                  setTempName(note.title)
-                                }
-                              }}
-                            />
-                          ) : (
-                            <span>📝 {note.title}</span>
-                          )}
-                        </Space>
+                        {editingNoteId === note.id ? (
+                          <Input
+                            size="small"
+                            autoFocus
+                            value={tempName}
+                            style={{ width: 120, background: 'rgba(19, 17, 17, 0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff' }}
+                            onChange={(e) => setTempName(e.target.value)}
+                            onBlur={() => handleRenameNote(note.id)}
+                            onPressEnter={() => handleRenameNote(note.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Escape') {
+                                setEditingNoteId(null)
+                                setTempName(note.title)
+                              }
+                            }}
+                          />
+                        ) : (
+                          <span className="note-title-text">📝 {note.title}</span>
+                        )}
 
-                        <Space>
-                          {/* Rename */}
-                          <Tooltip title="Sửa tên ghi chú">
+                        <div className="note-actions">
+                          <Tooltip title="Sửa tên">
                             <EditOutlined
+                              className="note-action-icon"
                               onClick={(e) => {
                                 e.stopPropagation()
                                 setEditingNoteId(note.id)
@@ -439,21 +435,18 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                               }}
                             />
                           </Tooltip>
-
-                          {/* Delete */}
-                          <Tooltip title="Xoá ghi chú">
+                          <Tooltip title="Xoá">
                             <DeleteFilled
-                              style={{ color: '#ff7875' }}
+                              className="note-action-icon danger"
                               onClick={(e) => {
                                 e.stopPropagation()
                                 handleDeleteNote(note.id)
                               }}
                             />
                           </Tooltip>
-
-                          {/* Share */}
-                          <Tooltip title="Chia sẻ ghi chú">
+                          <Tooltip title="Chia sẻ">
                             <ShareAltOutlined
+                              className="note-action-icon"
                               onClick={(e) => {
                                 e.stopPropagation()
                                 setShareNoteId(note.id)
@@ -461,7 +454,7 @@ const NotesSidebar = ({ onSelectNote, filterDate, onFilterChange }) => {
                               }}
                             />
                           </Tooltip>
-                        </Space>
+                        </div>
                       </List.Item>
                     )}
                   />

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Form, Input, Button, Card, message, Row, Col, Typography } from 'antd'
 import { MailOutlined, LockOutlined } from '@ant-design/icons'
 import { useMutation } from '@apollo/client'
@@ -16,6 +16,14 @@ const Login = () => {
 
   const [login, { loading }] = useMutation(LOGIN_MUTATION)
 
+  useEffect(() => {
+    const token = localStorage.getItem('access_token')
+    const refreshToken = localStorage.getItem('refresh_token')
+    if (token || refreshToken) {
+      navigate('/my-notes')
+    }
+  }, [navigate])
+
   const onFinish = async (values) => {
     try {
       const { data } = await login({
@@ -28,7 +36,8 @@ const Login = () => {
       })
 
       const token = data.login.access_token
-      dispatch(setLogin(token))
+      const refreshToken = data.login.refresh_token
+      dispatch(setLogin({ access_token: token, refresh_token: refreshToken }))
 
       message.success('Đăng nhập thành công 🚀')
       navigate('/my-notes')
